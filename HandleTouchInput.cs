@@ -5,7 +5,7 @@ public class HandleTouchInput : MonoBehaviour
 {
     private float touchStartTime;
     private Vector2 touchStartPosition;
-    [SerializeField] private float deadZone = 30f;
+    [SerializeField] private float deadZone = 3f;
     [SerializeField] private Text textComponent;
     [SerializeField] private float minimumSwipeDuration = 0.1f;
     [SerializeField] private float minimumSwipeSpeed = 3f;
@@ -31,7 +31,7 @@ public class HandleTouchInput : MonoBehaviour
                 float touchDuration = Time.time - touchStartTime;
                 float touchSpeed = touch.position.y - touchStartPosition.y / touchDuration;
 
-                if (touchDuration > minimumSwipeDuration && Mathf.Abs(touchSpeed) > minimumSwipeSpeed /*&& Mathf.Abs(touch.deltaPosition.y) > deadZone*/)
+                if (touchDuration > minimumSwipeDuration && Mathf.Abs(touchSpeed) > minimumSwipeSpeed)
                 {
                     if (touch.deltaPosition.y > 0)
                     {
@@ -41,11 +41,11 @@ public class HandleTouchInput : MonoBehaviour
                     {
                         textComponent.text = "Down swipe";
                     }
-                    if (touch.deltaPosition.x > 3)
+                    if (touch.deltaPosition.x > deadZone)
                     {
                         textComponent.text = "right swipe";
                     }
-                    if (touch.deltaPosition.x < -3)
+                    if (touch.deltaPosition.x < -deadZone)
                     {
                         textComponent.text = "left swipe";
                     }
