@@ -24,7 +24,7 @@ public class HandleTouchInput : MonoBehaviour
             {
                 textComponent.text = "right touch";
             }
-            else
+            if (touch.position.x < Screen.width / 2)
             {
                 textComponent.text = "left touch";
             }
