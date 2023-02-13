@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class HandleTouchInput : MonoBehaviour
@@ -20,15 +20,6 @@ public class HandleTouchInput : MonoBehaviour
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
-            if (touch.position.x > Screen.width / 2)
-            {
-                textComponent.text = "right touch";
-            }
-            if (touch.position.x < Screen.width / 2)
-            {
-                textComponent.text = "left touch";
-            }
-
             if (touch.phase == TouchPhase.Began)
             {
                 touchStartTime = Time.time;
@@ -49,6 +40,14 @@ public class HandleTouchInput : MonoBehaviour
                     if (touch.deltaPosition.y < 0)
                     {
                         textComponent.text = "Down swipe";
+                    }
+                    if (touch.deltaPosition.x > 3)
+                    {
+                        textComponent.text = "right swipe";
+                    }
+                    if (touch.deltaPosition.x < -3)
+                    {
+                        textComponent.text = "left swipe";
                     }
                 }
             }
