@@ -1,53 +1,55 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HandleTouchInput : MonoBehaviour
+public class SwipeDetector : MonoBehaviour
 {
-    private float touchStartTime;
-    private Vector2 touchStartPosition;
-    [SerializeField] private float deadZone = 3f;
     [SerializeField] private Text textComponent;
-    [SerializeField] private float minimumSwipeDuration = 0.1f;
-    [SerializeField] private float minimumSwipeSpeed = 3f;
+    private Vector2 startPos, endPos, direction;
+    private float touchTimeStart, touchTimeFinish, timeInterval;
 
-    void Update()
+    private void Update()
     {
-        Move();
-    }
-
-    private void Move()
-    {
-        if (Input.touchCount > 0)
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
-            Touch touch = Input.GetTouch(0);
-            if (touch.phase == TouchPhase.Began)
-            {
-                touchStartTime = Time.time;
-                touchStartPosition = touch.position;
-            }
+            touchTimeStart = Time.time;
+            startPos = Input.GetTouch(0).position;
+        }
 
-            if (touch.phase == TouchPhase.Ended)
-            {
-                float touchDuration = Time.time - touchStartTime;
-                float touchSpeed = touch.position.y - touchStartPosition.y / touchDuration;
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
+        {
+            touchTimeFinish = Time.time;
+            timeInterval = touchTimeFinish - touchTimeStart;
+            endPos = Input.GetTouch(0).position;
+            direction = endPos - startPos;
 
-                if (touchDuration > minimumSwipeDuration && Mathf.Abs(touchSpeed) > minimumSwipeSpeed)
+            // проверяем длительность жеста
+            if (timeInterval > 0.05f)
+            {
+                // проверяем направление жеста
+                if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
                 {
-                    if (touch.deltaPosition.y > 0)
+                    if (direction.x > 0)
+                    {
+                        textComponent.text = "Right swipe";
+                        Debug.Log("Right Swipe");
+                    }
+                    else
+                    {
+                        textComponent.text = "Left swipe";
+                        Debug.Log("Left Swipe");
+                    }
+                }
+                else
+                {
+                    if (direction.y > 0)
                     {
                         textComponent.text = "Up swipe";
+                        Debug.Log("Up Swipe");
                     }
-                    if (touch.deltaPosition.y < 0)
+                    else
                     {
                         textComponent.text = "Down swipe";
-                    }
-                    if (touch.deltaPosition.x > deadZone)
-                    {
-                        textComponent.text = "right swipe";
-                    }
-                    if (touch.deltaPosition.x < -deadZone)
-                    {
-                        textComponent.text = "left swipe";
+                        Debug.Log("Down Swipe");
                     }
                 }
             }
