@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -10,7 +10,7 @@ public class SwipeDetector : MonoBehaviour
     private Vector2 startPos, endPos, direction;
     private float touchTimeStart, touchTimeFinish, timeInterval;
 
-    private bool IsPointerOverUIObject()
+    private bool IsTouchingUIElement()
     {
         PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
         eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
@@ -30,8 +30,8 @@ public class SwipeDetector : MonoBehaviour
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
         {
             textVector.text = "UI Object";
-            textRange.text = IsPointerOverUIObject().ToString();
-            if (!IsPointerOverUIObject())
+            textRange.text = IsTouchingUIElement().ToString();
+            if (!IsTouchingUIElement())
             {
                 touchTimeFinish = Time.time;
                 timeInterval = touchTimeFinish - touchTimeStart;
