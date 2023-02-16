@@ -60,7 +60,7 @@ public class SwipeDetector : MonoBehaviour
                             textVector.text = "Up swipe";
                             textRange.text = "delta y = " + direction.y.ToString();
                         }
-                        if (direction.y < 0)
+                        else
                         {
                             textVector.text = "Down swipe";
                             textRange.text = "delta y = " + direction.y.ToString();
