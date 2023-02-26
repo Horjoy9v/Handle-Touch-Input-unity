@@ -1,78 +1,61 @@
-using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
+using UnityEngine;
 
-public class SwipeDetector : MonoBehaviour
+public enum SwipeDirection
 {
-    [SerializeField] private Text textVector;
-    [SerializeField] private Text textRange;
-    private Vector2 startPos, endPos, direction;
-    private float touchTimeStart, touchTimeFinish, timeInterval;
-
-    private bool IsTouchingUIElement()
+    Up,
+    Down,
+    Left,
+    Right,
+    none
+}
+public class SwipeDetector : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+{
+    private Vector2 startPosition, endPosition;
+    public static Vector2 direction;
+    private const float MIN_SWIPE_DISTANCE = 100f;
+    public static SwipeDirection lastSwipeDirection = SwipeDirection.none;
+    public void Reset()
     {
-        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
-        eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-        List<RaycastResult> results = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
-        return results.Count > 0;
+        startPosition = Vector2.zero;
+        endPosition = Vector2.zero;
+    }
+    public virtual void OnPointerDown(PointerEventData eventData)
+    {
+        startPosition = eventData.position;
     }
 
-    private void Update()
+    public virtual void OnPointerUp(PointerEventData eventData)
     {
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
-        {
-            touchTimeStart = Time.time;
-            startPos = Input.GetTouch(0).position;
-        }
+        endPosition = eventData.position;
+        direction = (endPosition - startPosition);
+        GetSwipeDirection();
+    }
 
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
+    public SwipeDirection GetSwipeDirection()
+    {
+        if (direction.magnitude > MIN_SWIPE_DISTANCE)
+            direction.x.ToString();
+
+        if (direction.magnitude > MIN_SWIPE_DISTANCE)
         {
-            textVector.text = "UI Object";
-            textRange.text = IsTouchingUIElement().ToString();
-            if (!IsTouchingUIElement())
+            if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
             {
-                touchTimeFinish = Time.time;
-                timeInterval = touchTimeFinish - touchTimeStart;
-                endPos = Input.GetTouch(0).position;
-                direction = endPos - startPos;
-            
-                if (timeInterval > 0.05f && direction.magnitude > 100)
-                {
-                    if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
-                    {
-                        if (direction.x > 0)
-                        {
-                            textVector.text = "Right swipe";
-                            textRange.text = "delta x = " + direction.x.ToString();
-                        }
-                        else
-                        {
-                            textVector.text = "Left swipe";
-                            textRange.text = "delta x = " + direction.x.ToString();
-                        }
-                    }
-                    else
-                    {
-                        if (direction.y > 0)
-                        {
-                            textVector.text = "Up swipe";
-                            textRange.text = "delta y = " + direction.y.ToString();
-                        }
-                        else
-                        {
-                            textVector.text = "Down swipe";
-                            textRange.text = "delta y = " + direction.y.ToString();
-                        }
-                    }
-                }
+                if (direction.x > 0)
+                    lastSwipeDirection = SwipeDirection.Right;
+
                 else
-                {
-                    textVector.text = "touch";
-                    textRange.text = "null";
-                }
+                    lastSwipeDirection = SwipeDirection.Left;
+            }
+            else if (Mathf.Abs(direction.x) < Mathf.Abs(direction.y))
+            {
+                if (direction.y > 0)
+                    lastSwipeDirection = SwipeDirection.Up;
+
+                else
+                    lastSwipeDirection = SwipeDirection.Down;
             }
         }
+        return lastSwipeDirection;
     }
 }
